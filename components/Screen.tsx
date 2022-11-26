@@ -1,11 +1,15 @@
 import React from "react";
-import { View, Text, Button } from "react-native";
+import { View, Text, Button, SafeAreaView } from "react-native";
 import { StatusBar } from "expo-status-bar";
 export type homeProps = {
   children: any;
 };
 const Screen: React.FC<homeProps> = ({ children }) => {
-  return <View style={{ flex: 1, backgroundColor: "#eee" }}>{children}</View>;
+  return (
+    <SafeAreaView>
+      <View style={{ backgroundColor: "#000" }}>{children}</View>
+    </SafeAreaView>
+  );
 };
 
 export default Screen;

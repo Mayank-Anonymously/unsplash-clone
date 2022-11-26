@@ -1,6 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import React, { useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  ScrollView,
+  FlatList,
+  ImageBackground,
+} from "react-native";
 
 import Screen from "../components/Screen";
 import LinearGradHeader from "../components/linearGradHeader";
@@ -8,11 +17,39 @@ import Svg, { Circle } from "react-native-svg";
 import { TypedUseSelectorHook } from "react-redux";
 import { RootState } from "../redux/rootReducer";
 import { useSelector } from "react-redux";
-import { selectTodos } from "../redux/slices/GetPhotos";
+import { useDispatch } from "react-redux";
+import { getPhotos, Photos, selectPictures } from "../redux/slices/GetPhotos";
+import { GetAllPhotos } from "../api-services/GetPhotos";
+import SwiperFlatList from "react-native-swiper-flatlist";
 const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
 const width = Dimensions.get("screen").width;
+
 const HomeScreen = () => {
-  const photos = useTypedSelector(selectTodos);
+  const dispatch = useDispatch();
+  const photos = useTypedSelector(selectPictures);
+  useEffect(() => {
+    GetAllPhotos({ dispatch });
+  }, []);
+
+  const Item = ({ data }: { data: Photos }) => (
+    <View>
+      {data.map((item) => (
+        <ImageBackground
+          source={{ uri: item.urls.regular }}
+          style={styles.itemImagebackground}
+        >
+          <Text style={styles.sponsortagText}>
+            {item.sponsorship === null ? "" : "Sponsored"}
+          </Text>
+          <Text style={styles.sponsorText}>
+            {item.sponsorship === null
+              ? item.user.name
+              : item.sponsorship.sponsor.name}
+          </Text>
+        </ImageBackground>
+      ))}
+    </View>
+  );
 
   return (
     <Screen>
@@ -30,13 +67,18 @@ const HomeScreen = () => {
           />
         </View>
       </LinearGradHeader>
+      <View style={{ margin: 30 }} />
+      <FlatList
+        data={photos}
+        renderItem={({ item }) => <Item data={item} />}
+        keyExtractor={(item: Photos) => item.id}
+      />
     </Screen>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 2,
     flexDirection: "row",
     justifyContent: "space-between",
     width: width / 1.6,
@@ -49,6 +91,25 @@ const styles = StyleSheet.create({
     height: 50,
     width: 100,
   },
+  itemImagebackground: {
+    flex: 1,
+    flexDirection: "column-reverse",
+    width: 500,
+    height: 500,
+  },
+  sponsortagText: {
+    color: "white",
+    marginLeft: 10,
+    marginBottom: 20,
+    fontWeight: "bold",
+  },
+  sponsorText: {
+    color: "white",
+    marginLeft: 10,
+    fontWeight: "bold",
+  },
+  child: { width: width, justifyContent: "center" },
+  text: { fontSize: width * 0.5, textAlign: "center" },
 });
 
 export default HomeScreen;

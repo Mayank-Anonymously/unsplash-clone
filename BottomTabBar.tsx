@@ -5,7 +5,7 @@ import {
 } from "@react-navigation/bottom-tabs";
 import { MainBottomTabParamList } from "./screens/RootStackParams";
 import HomeScreen from "./MainScreens.js/HomeScreen";
-import DetailsScreen from "./MainScreens.js/Detail.Screen";
+import DetailsScreen from "./MainScreens.js/SearchScreen";
 import MainScreen from "./MainScreens.js/Main";
 import AuthScreen from "./MainScreens.js/Auth";
 import Ionicons from "react-native-vector-icons/Ionicons";

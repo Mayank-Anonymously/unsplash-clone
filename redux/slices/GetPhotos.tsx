@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../rootReducer";
+import axios from "axios";
 export interface Photos {
   id: string;
   created_at: string;
@@ -39,6 +40,8 @@ export interface Photos {
     for_hire: boolean;
     social: object;
   };
+  map: any;
+  item: any;
 }
 
 const initialState: Photos[] = [];
@@ -57,4 +60,4 @@ export const { getPhotos } = pictureSlice.actions;
 
 export default pictureSlice.reducer;
 
-export const selectTodos = (state: RootState) => state.pictures;
+export const selectPictures = (state: RootState) => state.pictures;
