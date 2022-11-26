@@ -8,7 +8,8 @@ import {
   Animated,
   ImageBackground,
   FlatList,
-  TouchableOpacity,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
 import Screen from "../components/Screen";
 import TextField from "../components/TextInput";
@@ -19,6 +20,8 @@ import { RootState } from "../redux/rootReducer";
 import { useSelector } from "react-redux";
 import { GetSearch, Search } from "../redux/slices/SearchPhotos";
 import { persistedSearches, SaveSeaches } from "../redux/slices/SaveSearches";
+import { GetAllCollection } from "../redux/slices/GetAllCollections";
+import { Photos, selectPictures } from "../redux/slices/GetPhotos";
 const width = Dimensions.get("screen").width;
 
 const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -29,14 +32,25 @@ function SearchScreen() {
   const [selected, setSelected] = useState(1);
   const serach = useTypedSelector(GetSearch);
   const saveSearches = useTypedSelector(persistedSearches);
+  const photos = useTypedSelector(selectPictures);
+  const Collection = useTypedSelector(GetAllCollection);
   const dispatch = useDispatch();
-  console.log(saveSearches);
+  const ColData = Collection[0];
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout: any) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
   const handleCancel = () => {
     SearchApi({ dispatch, state });
     // dispatch(SaveSeaches(state));
   };
 
-  const Item = ({ data }: { data: Search }) => (
+  const Itemm = ({ data }: { data: Search }) => (
     <View>
       <ImageBackground
         source={{ uri: data.urls.regular }}
@@ -54,6 +68,25 @@ function SearchScreen() {
     </View>
   );
 
+  const Item = ({ data }: { data: Photos }) => (
+    <View>
+      {data.map((item: any) => (
+        <ImageBackground
+          source={{ uri: item.urls.regular }}
+          style={styles.itemImagebackground}
+        >
+          <Text style={styles.sponsortagText}>
+            {item.sponsorship === null ? "" : "Sponsored"}
+          </Text>
+          <Text style={styles.sponsorText}>
+            {item.sponsorship === null
+              ? item.user.name
+              : item.sponsorship.sponsor.name}
+          </Text>
+        </ImageBackground>
+      ))}
+    </View>
+  );
   return (
     <Screen>
       <View style={styles.inputView}>
@@ -68,7 +101,7 @@ function SearchScreen() {
           handleCancel={handleCancel}
         />
       </View>
-      <View style={styles.tabs}>
+      {/* <View style={styles.tabs}>
         <TouchableOpacity onPress={() => setSelected(0)}>
           <Text
             style={selected == 0 ? styles.selctedTab : styles.unSelectedTab}
@@ -90,19 +123,126 @@ function SearchScreen() {
             Text3
           </Text>
         </TouchableOpacity>
-      </View>
-      <View>
-        {serach.length == 0 ? (
-          <Text style={{ color: "white", fontWeight: "bold" }}>{state}</Text>
-        ) : (
-          <FlatList
-            data={serach[0].results}
-            renderItem={({ item }) => <Item data={item} />}
-            keyExtractor={(item: Search) => item.id}
-            numColumns={2}
-          />
-        )}
-      </View>
+      </View> */}
+      <ScrollView>
+        <View>
+          {serach.length == 0 ? (
+            <Text style={{ color: "white", fontWeight: "bold" }}>{state}</Text>
+          ) : (
+            <FlatList
+              data={serach[0].results}
+              renderItem={({ item }) => <Itemm data={item} />}
+              keyExtractor={(item: Search) => item.id}
+              numColumns={2}
+            />
+          )}
+        </View>
+        <View>
+          <Text style={{ fontSize: 30, color: "white", marginHorizontal: 20 }}>
+            Browse by Category
+          </Text>
+          <View style={{ flexDirection: "row" }}>
+            {ColData.map((item: any) => {
+              return (
+                <View>
+                  <ImageBackground
+                    source={{ uri: item.cover_photo.urls.regular }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      marginHorizontal: 15,
+                      marginVertical: 15,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 10,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 20,
+                        color: "white",
+                      }}
+                    >
+                      {item.title}
+                    </Text>
+                  </ImageBackground>
+                </View>
+              );
+            })}
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            {ColData.map((item: any) => {
+              return (
+                <View>
+                  <ImageBackground
+                    source={{ uri: item.cover_photo.urls.regular }}
+                    style={{
+                      width: 100,
+                      height: 100,
+                      marginHorizontal: 15,
+                      marginVertical: 15,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 10,
+                      overflow: "hidden",
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 20,
+                        color: "white",
+                      }}
+                    >
+                      {item.title}
+                    </Text>
+                  </ImageBackground>
+                </View>
+              );
+            })}
+          </View>
+          <View>
+            <Text
+              style={{
+                fontSize: 30,
+                color: "white",
+                marginHorizontal: 20,
+                marginVertical: 20,
+              }}
+            >
+              Discover
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row" }}>
+            <FlatList
+              data={photos}
+              renderItem={({ item }) => <Item data={item} />}
+              keyExtractor={(item: Photos) => item.id}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={"whitesmoke"}
+                />
+              }
+            />
+            <FlatList
+              data={photos}
+              renderItem={({ item }) => <Item data={item} />}
+              keyExtractor={(item: Photos) => item.id}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={"whitesmoke"}
+                />
+              }
+            />
+          </View>
+        </View>
+      </ScrollView>
     </Screen>
   );
 }
@@ -135,7 +275,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     color: "white",
     paddingLeft: 10,
-    width: width / 1.6,
+    width: width / 1.7,
   },
   itemImagebackground: {
     flex: 1,

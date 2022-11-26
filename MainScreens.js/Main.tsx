@@ -12,6 +12,7 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import { RootStackParamList } from "../screens/RootStackParams";
 import Screen from "../components/Screen";
 import LinearGradHeader from "../components/linearGradHeader";
+import TabViewExample from "../components/TopTab";
 
 type mainScreenProp = StackNavigationProp<RootStackParamList, "Main">;
 const width = Dimensions.get("screen").width;
@@ -34,6 +35,7 @@ function MainScreen() {
           />
         </View>
       </LinearGradHeader>
+      <TabViewExample />
     </Screen>
   );
 }

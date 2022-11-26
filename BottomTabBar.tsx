@@ -9,56 +9,27 @@ import DetailsScreen from "./MainScreens.js/SearchScreen";
 import MainScreen from "./MainScreens.js/Main";
 import AuthScreen from "./MainScreens.js/Auth";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { BlurView } from "expo-blur";
 
 const BottomTab = createBottomTabNavigator<MainBottomTabParamList>();
 
 function BottomMainScreen() {
-  //   const BottomTabNavigationOptions:()  React.FC<Props> =  ({
-  //     headerShown: false,
-  //     tabBarStyle: {
-  //       backgroundColor: "#000",
-  //     },
-  //     tabBarBackground: () => (
-  //       <BlurView tint="dark" intensity={10} style={StyleSheet.absoluteFill} />
-  //     ),
-  // tabBarIcon: ({ focused, color, size }) => {
-  //             let iconName;
-
-  //             if (route.name === 'Home') {
-  //               iconName = focused
-  //                 ? 'ios-information-circle'
-  //                 : 'ios-information-circle-outline';
-  //             } else if (route.name === 'Settings') {
-  //               iconName = focused ? 'ios-list' : 'ios-list-outline';
-  //             }
-
-  //             // You can return any component that you like here!
-  //             return <Ionicons name={iconName} size={size} color={color} />;
-  //           },
-  //   });
+  const GetHomeIcon = (focused: boolean) => {
+    return <Ionicons name="images" size={24} color={"white"} />;
+  };
+  const GetSearchIcon = (focused: boolean) => {
+    return <Ionicons name="search" size={24} color={"white"} />;
+  };
+  const GetAddIcon = (focused: boolean) => {
+    return <Ionicons name="ios-add-circle-outline" size={24} color={"white"} />;
+  };
+  const GetProfileIcon = (focused: boolean) => {
+    return <Ionicons name="alert-circle-sharp" size={24} color={"white"} />;
+  };
   return (
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name == "Home") {
-            iconName = focused
-              ? "ios-information-circle"
-              : "ios-information-circle-outline";
-          } else if (route.name == "Details") {
-            iconName = focused ? "ios-list" : "ios-list-outline";
-          } else if (route.name == "Main") {
-            iconName = focused ? "ios-list" : "ios-list-outline";
-          } else if (route.name == "Auth") {
-            iconName = focused ? "ios-list" : "ios-list-outline";
-          }
-
-          // You can return any component that you like here!
-          return <Ionicons name={"ios-list"} size={size} color={color} />;
-        },
+        tabBarShowLabel: false,
         tabBarActiveTintColor: "white",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {
@@ -66,10 +37,26 @@ function BottomMainScreen() {
         },
       })}
     >
-      <BottomTab.Screen name="Home" component={HomeScreen} />
-      <BottomTab.Screen name="Details" component={DetailsScreen} />
-      <BottomTab.Screen name="Main" component={MainScreen} />
-      <BottomTab.Screen name="Auth" component={AuthScreen} />
+      <BottomTab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{ tabBarIcon: ({ focused }) => GetHomeIcon(focused) }}
+      />
+      <BottomTab.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{ tabBarIcon: ({ focused }) => GetSearchIcon(focused) }}
+      />
+      <BottomTab.Screen
+        name="Main"
+        component={MainScreen}
+        options={{ tabBarIcon: ({ focused }) => GetAddIcon(focused) }}
+      />
+      <BottomTab.Screen
+        name="Auth"
+        component={AuthScreen}
+        options={{ tabBarIcon: ({ focused }) => GetProfileIcon(focused) }}
+      />
     </BottomTab.Navigator>
   );
 }

@@ -40,6 +40,7 @@ export interface Photos {
     for_hire: boolean;
     social: object;
   };
+
   map: any;
   item: any;
 }

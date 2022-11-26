@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   ScrollView,
   FlatList,
   ImageBackground,
+  RefreshControl,
 } from "react-native";
 
 import Screen from "../components/Screen";
@@ -20,20 +21,39 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { getPhotos, Photos, selectPictures } from "../redux/slices/GetPhotos";
 import { GetAllPhotos } from "../api-services/GetPhotos";
-import SwiperFlatList from "react-native-swiper-flatlist";
+import { GetAllCollections } from "../api-services/GetAllCollections";
+import { GetAllCollection } from "../redux/slices/GetAllCollections";
+
 const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
 const width = Dimensions.get("screen").width;
-
+// export interface functionProps {
+//   dispatch: any;
+//   urlState: any;
+// }
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const photos = useTypedSelector(selectPictures);
+  const Collection = useTypedSelector(GetAllCollection);
+  const [urlState, setUrlState] = useState("");
+  const ColData = Collection[0];
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const wait = (timeout: any) => {
+    return new Promise((resolve) => setTimeout(resolve, timeout));
+  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
   useEffect(() => {
-    GetAllPhotos({ dispatch });
+    GetAllPhotos({ dispatch, urlState });
+    GetAllCollections({ dispatch });
   }, []);
 
   const Item = ({ data }: { data: Photos }) => (
     <View>
-      {data.map((item) => (
+      {data.map((item: any) => (
         <ImageBackground
           source={{ uri: item.urls.regular }}
           style={styles.itemImagebackground}
@@ -51,6 +71,8 @@ const HomeScreen = () => {
     </View>
   );
 
+  console.log("photos::", photos[0]);
+
   return (
     <Screen>
       <LinearGradHeader>
@@ -67,11 +89,43 @@ const HomeScreen = () => {
           />
         </View>
       </LinearGradHeader>
-      <View style={{ margin: 30 }} />
+      <View
+        style={{
+          flexDirection: "row",
+          marginTop: 60,
+          borderBottomWidth: 1,
+          borderBottomColor: "white",
+          marginBottom: 10,
+        }}
+      >
+        {ColData == undefined ? (
+          <Text>Wait</Text>
+        ) : (
+          <ScrollView horizontal={true}>
+            {ColData.map((item: any) => {
+              return (
+                <Text
+                  style={styles.collectiontextColor}
+                  onPress={() => alert(item.links.photos)}
+                >
+                  {item.title}
+                </Text>
+              );
+            })}
+          </ScrollView>
+        )}
+      </View>
       <FlatList
         data={photos}
         renderItem={({ item }) => <Item data={item} />}
         keyExtractor={(item: Photos) => item.id}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={"whitesmoke"}
+          />
+        }
       />
     </Screen>
   );
@@ -108,8 +162,10 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: "bold",
   },
-  child: { width: width, justifyContent: "center" },
-  text: { fontSize: width * 0.5, textAlign: "center" },
+  collectiontextColor: {
+    color: "white",
+    margin: 10,
+  },
 });
 
 export default HomeScreen;
