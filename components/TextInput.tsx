@@ -26,29 +26,29 @@ const TextField: React.FC<Input> = ({
   getter,
   handleCancel,
 }) => {
-  const FadeInView = (props: FadeInView) => {
-    const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  // const FadeInView = (props: FadeInView) => {
+  //   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
 
-    useEffect(() => {
-      if (getter !== "") {
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 1000,
-          useNativeDriver: true,
-        }).start();
-      }
-    }, [fadeAnim]);
+  //   useEffect(() => {
+  //     if (getter !== "") {
+  //       Animated.timing(fadeAnim, {
+  //         toValue: 1,
+  //         duration: 1000,
+  //         useNativeDriver: true,
+  //       }).start();
+  //     }
+  //   }, [fadeAnim]);
 
-    return (
-      <Animated.View // Special animatable View
-        style={{
-          opacity: fadeAnim, // Bind opacity to animated value
-        }}
-      >
-        {props.children}
-      </Animated.View>
-    );
-  };
+  //   return (
+  //     <Animated.View // Special animatable View
+  //       style={{
+  //         opacity: fadeAnim, // Bind opacity to animated value
+  //       }}
+  //     >
+  //       {props.children}
+  //     </Animated.View>
+  //   );
+  // };
 
   return (
     <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
@@ -61,7 +61,7 @@ const TextField: React.FC<Input> = ({
         // onBlur={onBlur}
         // onFocus={onFocus}
       />
-      <FadeInView>
+      {/* <FadeInView>
         <Text
           onPress={() => handleCancel()}
           style={{
@@ -71,9 +71,9 @@ const TextField: React.FC<Input> = ({
             color: "white",
           }}
         >
-          cancel
+          Search
         </Text>
-      </FadeInView>
+      </FadeInView> */}
     </View>
   );
 };

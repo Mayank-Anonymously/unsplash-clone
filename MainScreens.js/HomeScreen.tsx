@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,8 +10,9 @@ import {
   FlatList,
   ImageBackground,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
-
+import RBSheet from "react-native-raw-bottom-sheet";
 import Screen from "../components/Screen";
 import LinearGradHeader from "../components/linearGradHeader";
 import Svg, { Circle } from "react-native-svg";
@@ -23,17 +24,19 @@ import { getPhotos, Photos, selectPictures } from "../redux/slices/GetPhotos";
 import { GetAllPhotos } from "../api-services/GetPhotos";
 import { GetAllCollections } from "../api-services/GetAllCollections";
 import { GetAllCollection } from "../redux/slices/GetAllCollections";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../screens/RootStackParams";
 
 const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
+type navigationProp = StackNavigationProp<RootStackParamList, "Auth">;
+
 const width = Dimensions.get("screen").width;
-// export interface functionProps {
-//   dispatch: any;
-//   urlState: any;
-// }
+
 const HomeScreen = () => {
   const dispatch = useDispatch();
   const photos = useTypedSelector(selectPictures);
   const Collection = useTypedSelector(GetAllCollection);
+  const navigation = useNavigation<navigationProp>();
   const [urlState, setUrlState] = useState("");
   const ColData = Collection[0];
   const [refreshing, setRefreshing] = React.useState(false);
@@ -71,17 +74,17 @@ const HomeScreen = () => {
     </View>
   );
 
-  console.log("photos::", photos[0]);
-
   return (
     <Screen>
       <LinearGradHeader>
         <View style={styles.container}>
-          <Image
-            source={require("../assets/unsplash-white-symbol.png")}
-            style={styles.image_symbol}
-            resizeMode="center"
-          />
+          <TouchableOpacity onPress={() => navigation.navigate("appDetails")}>
+            <Image
+              source={require("../assets/unsplash-white-symbol.png")}
+              style={styles.image_symbol}
+              resizeMode="center"
+            />
+          </TouchableOpacity>
           <Image
             source={require("../assets/unsplash-full-logo.png")}
             style={styles.image}
@@ -89,19 +92,12 @@ const HomeScreen = () => {
           />
         </View>
       </LinearGradHeader>
-      <View
-        style={{
-          flexDirection: "row",
-          marginTop: 60,
-          borderBottomWidth: 1,
-          borderBottomColor: "white",
-          marginBottom: 10,
-        }}
-      >
+
+      <View style={styles.categoryView}>
         {ColData == undefined ? (
           <Text>Wait</Text>
         ) : (
-          <ScrollView horizontal={true}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {ColData.map((item: any) => {
               return (
                 <Text
@@ -127,6 +123,8 @@ const HomeScreen = () => {
           />
         }
       />
+
+      {/* <Button title="OPEN BOTTOM SHEET" onPress={() => this.RBSheet.open()} /> */}
     </Screen>
   );
 };
@@ -165,6 +163,13 @@ const styles = StyleSheet.create({
   collectiontextColor: {
     color: "white",
     margin: 10,
+  },
+  categoryView: {
+    flexDirection: "row",
+    marginTop: 60,
+    borderBottomWidth: 1,
+    borderBottomColor: "white",
+    marginBottom: 10,
   },
 });
 

@@ -13,17 +13,17 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 const BottomTab = createBottomTabNavigator<MainBottomTabParamList>();
 
 function BottomMainScreen() {
-  const GetHomeIcon = (focused: boolean) => {
-    return <Ionicons name="images" size={24} color={"white"} />;
+  const GetHomeIcon = (focused: boolean, color: string) => {
+    return <Ionicons name="images" size={24} color={color} />;
   };
-  const GetSearchIcon = (focused: boolean) => {
-    return <Ionicons name="search" size={24} color={"white"} />;
+  const GetSearchIcon = (focused: boolean, color: string) => {
+    return <Ionicons name="search" size={24} color={color} />;
   };
-  const GetAddIcon = (focused: boolean) => {
-    return <Ionicons name="ios-add-circle-outline" size={24} color={"white"} />;
+  const GetAddIcon = (focused: boolean, color: string) => {
+    return <Ionicons name="ios-add-circle-outline" size={24} color={color} />;
   };
-  const GetProfileIcon = (focused: boolean) => {
-    return <Ionicons name="alert-circle-sharp" size={24} color={"white"} />;
+  const GetProfileIcon = (focused: boolean, color: string) => {
+    return <Ionicons name="alert-circle-sharp" size={24} color={color} />;
   };
   return (
     <BottomTab.Navigator
@@ -40,22 +40,30 @@ function BottomMainScreen() {
       <BottomTab.Screen
         name="Home"
         component={HomeScreen}
-        options={{ tabBarIcon: ({ focused }) => GetHomeIcon(focused) }}
+        options={{
+          tabBarIcon: ({ focused, color }) => GetHomeIcon(focused, color),
+        }}
       />
       <BottomTab.Screen
         name="Details"
         component={DetailsScreen}
-        options={{ tabBarIcon: ({ focused }) => GetSearchIcon(focused) }}
+        options={{
+          tabBarIcon: ({ focused, color }) => GetSearchIcon(focused, color),
+        }}
       />
       <BottomTab.Screen
         name="Main"
         component={MainScreen}
-        options={{ tabBarIcon: ({ focused }) => GetAddIcon(focused) }}
+        options={{
+          tabBarIcon: ({ focused, color }) => GetAddIcon(focused, color),
+        }}
       />
       <BottomTab.Screen
         name="Auth"
         component={AuthScreen}
-        options={{ tabBarIcon: ({ focused }) => GetProfileIcon(focused) }}
+        options={{
+          tabBarIcon: ({ focused, color }) => GetProfileIcon(focused, color),
+        }}
       />
     </BottomTab.Navigator>
   );

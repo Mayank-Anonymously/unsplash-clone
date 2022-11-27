@@ -2,7 +2,8 @@ export type RootStackParamList = {
   Main: undefined;
   Auth: undefined;
   Tab: undefined;
-  Mayank: undefined;
+  BottomTab: undefined;
+  appDetails: undefined;
 };
 
 export type MainBottomTabParamList = {
